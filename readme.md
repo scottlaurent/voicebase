@@ -57,10 +57,10 @@ $voicebase = app('voicebase')
 // Upload a media file to VoiceBase for analysis. Media files reside under the /media/ collection.
 
 // Non-Laravel
-$result = $voicebase->media()->uploadStream(fopen('sample.mp3', 'r'))
+$result = $voicebase->media()->uploadUsingStream(fopen('sample.mp3', 'r'))
 
 // Laravel
-$result = $voicebase->media()->uploadStream(Storage::readStream('sample.mp3’))
+$result = $voicebase->media()->uploadUsingStream(Storage::readStream('sample.mp3’))
 
 // Alternative Upload Method
 $result = $voicebase->media()->uploadFromPath('sample.mp3'))
