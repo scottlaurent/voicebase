@@ -17,7 +17,8 @@ class Voicebase
 	 */
 	protected $parameters = [
 		'token', // required
-		'base_url' // optional
+		'base_url', // optional
+		'accuracy_engine'
 	];
 
 	/**
@@ -29,17 +30,17 @@ class Voicebase
 	 * @var string
 	 */
 	protected $token;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $base_url = 'https://apis.voicebase.com/v2-beta';
-	
+
 	/**
 	 * @var $string
 	 */
 	protected $url;
-	
+
 	/**
 	 * Voicebase constructor.
 	 * @param null $parameters
@@ -55,13 +56,14 @@ class Voicebase
 	 * @param $method
 	 * @param $path
 	 * @param array $parameters
+	 * @param array $extra_headers
 	 * @return \Psr\Http\Message\StreamInterface
 	 * @throws \Exception
 	 */
-	function makeRequest($method, $path, $parameters=[])
+	function makeRequest($method, $path, $parameters=[], $extra_headers=[])
     {
 		try {
-			$client = $this->getClient();
+			$client = $this->getClient($extra_headers);
 			$reponse = $client->request($method, $path, $parameters);
 			return $reponse->getBody();
 		}
@@ -89,12 +91,13 @@ class Voicebase
 	 *
 	 * @param $path
 	 * @param array $parameters
+	 * @param array $extra_headers
 	 * @return \Psr\Http\Message\StreamInterface
 	 * @throws \Exception
 	 */
-	public function get($path, $parameters=[])
+	public function get($path, $parameters=[],$extra_headers=[])
     {
-        return $this->makeRequest('GET',$path,$parameters);
+        return $this->makeRequest('GET',$path,$parameters,$extra_headers);
     }
 
 
@@ -115,15 +118,16 @@ class Voicebase
 	/**
 	 * Generate a Guzzle client object
 	 *
+	 * @param array $extra_headers
 	 * @return Client
 	 */
-	private function getClient()
+	private function getClient($extra_headers=[])
     {
         if (!$this->client)
         {
 	        $this->client  = new Client([
 	            'base_uri' => $this->base_url . '/',
-				'headers' => [
+				'headers' => $extra_headers + [
 						'Authorization' => 'Bearer ' . $this->token]
 				]);
 		}
@@ -142,18 +146,18 @@ class Voicebase
 	{
         if (is_array($parameters))
         {
-            foreach (['token','base_url'] as $parameter)
+            foreach (['token','base_url','accuracy_engine'] as $parameter)
             {
                 if (isset($parameters[$parameter]))
 		        {
 		             $this->$parameter = $parameters[$parameter];
-		        }       
+		        }
             }
         } else {
             $this->token = $parameters;
         }
-        
-		foreach (['token','base_url'] as $parameter)
+
+		foreach (['token','base_url','accuracy_engine'] as $parameter)
 		{
 			if (!$this->$parameter)
 			{
@@ -161,13 +165,15 @@ class Voicebase
 			}
 		}
 	}
-	
+
 	/**
 	 * Magic method to handle service calls to Voicebase methods/objects
 	 *
-	 * @param $field
+	 * @param $method
+	 * @param $arguments
 	 * @return mixed
 	 * @throws \Exception
+	 * @internal param $field
 	 */
 	function __call($method,$arguments)
 	{

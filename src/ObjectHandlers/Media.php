@@ -42,6 +42,10 @@ class Media extends BaseObjectManagerHandler
             [
                 'name'=>'media',
                 'contents'=>$stream
+            ],
+             [
+                'name'=>'configuration',
+                'contents'=>['transcripts'=>['engine'=>$this->voicebase->accuracy_engine]]
             ]
         ];
 
@@ -95,19 +99,22 @@ class Media extends BaseObjectManagerHandler
 	public function getStatus()
     {
         $this->requiresMediaId();
-        $status = $this->checkProcessingStatus($this->media_id);
+        $status = $this->checkProcessingStatus();
         return $status['media']['status'];
     }
 
 	/**
 	 * Get Full Results of item in the /media/ collection.
 	 *
+	 * @param array $parameters
+	 * @param array $extra_headers
 	 * @return mixed
+	 * @throws \Exception
 	 */
-    public function getProcessedResults()
+    public function getProcessedResults($parameters=[],$extra_headers=[])
     {
         $this->requiresMediaId();
-        $results = $this->checkProcessingStatus($this->media_id);
+        $results = $this->checkProcessingStatus($parameters,$extra_headers);
         $status = $results['media']['status'];
 
         if ($status == "failed")
@@ -125,12 +132,15 @@ class Media extends BaseObjectManagerHandler
 	/**
 	 * Check the status of processing for the media by GETting its corresponding item in the /media/ collection.
 	 *
+	 * @param array $parameters
+	 * @param array $extra_headers
 	 * @return mixed
+	 * @throws \Exception
 	 */
-	public function checkProcessingStatus()
+	public function checkProcessingStatus($parameters=[],$extra_headers=[])
     {
         $this->requiresMediaId();
-        $response = $this->voicebase->get("media/".$this->media_id);
+        $response = $this->voicebase->get("media/".$this->media_id,$parameters,$extra_headers);
         return $this->decodeResponse($response);
     }
 
@@ -147,7 +157,7 @@ class Media extends BaseObjectManagerHandler
 	}
 
 	/**
-	 * Retrieve the latest plain text transcript for the media (present if requested when media is uploaded)
+	 * Retrieve the latest JSON transcript for the media (present if requested when media is uploaded)
 	 * @return mixed
 	 * @throws \Exception
 	 */
@@ -156,6 +166,20 @@ class Media extends BaseObjectManagerHandler
 		$results = $this->getProcessedResults();
 		return is_array($results) ? $results['media']['transcripts']['latest']['words'] : $results;
 	}
+
+	/**
+	 * Retrieve the latest PLAIN TEXT transcript for the media (present if requested when media is uploaded)
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function getPlainTextTranscript()
+	{
+        $this->requiresMediaId();
+        $response = $this->voicebase->get("media/".$this->media_id.'/transcripts/latest',[],['Accept' => 'text/plain']);
+        return $this->returnRawResponse($response);
+	}
+
+
 
 	/**
 	 * Retrieve the latest topics and keywords for the media (present if requested when media is uploaded)
