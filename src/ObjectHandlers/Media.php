@@ -45,7 +45,7 @@ class Media extends BaseObjectManagerHandler
             ],
              [
                 'name'=>'configuration',
-                'contents'=>json_encode(['transcripts'=>['engine'=>$this->voicebase->accuracy_engine]])
+                'contents'=>json_encode(['configuration'=>['transcripts'=>['engine'=>$this->voicebase->accuracy_engine]]])
             ]
         ];
 
