@@ -72,16 +72,11 @@ $media_id = $result['mediaId']
 ```
 // Since I am impatient, I can run this over and over and over and over
 $has_finished = $voicebase->media($media_id)->isFinished()
-
 $full_informative_status = $voicebase->media($media_id)->checkProcessingStatus()
-
 $results_if_available = $voicebase->media($media_id)->getProcessedResults()
 
-// A good one word response.
-// todo: teach girlfriend to response like this
+// Status Checking
 $status = $voicebase->media($media_id)->getStatus()
-
-// Every parent's fear
 $has_failed = $voicebase->media($media_id)->hasFailed()
 
 // The latest topics and keywords for the media
@@ -91,7 +86,7 @@ $latest_transcripts = $voicebase->media($media_id)->getLatestTranscript()
 // What did the people say in that mp3 file??
 $keywords = $voicebase->media($media_id)->getKeywords()
 $latest_keywords = $voicebase->media($media_id)->getLatestKeywords()
-
+$text_transcript = $voicebase->media($media_id)->getPlainTextTranscript()
 $topics = $voicebase->media($media_id)->getTopics()
 $latest_topics = $voicebase->media($media_id)->getLatestTopics()
 ```
