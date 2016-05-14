@@ -18,7 +18,7 @@ class Voicebase
 	protected $parameters = [
 		'token', // required
 		'base_url', // optional
-		'accuracy_engine'
+		'accuracy_engine' // optional
 	];
 
 	/**
@@ -30,6 +30,15 @@ class Voicebase
 	 * @var string
 	 */
 	protected $token;
+
+	/**
+	 * Supported values are:
+	 * standard - the standard engine emphasizing speed over accuracy
+	 * premium - the premium engine emphasing high accuracy
+	 *
+	 * @var string
+	 */
+	protected $accuracy_engine = 'standard';
 
 	/**
 	 * @var string
