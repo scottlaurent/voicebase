@@ -62,6 +62,9 @@ $result = $voicebase->media()->uploadUsingStream(fopen('sample.mp3', 'r'))
 // Laravel
 $result = $voicebase->media()->uploadUsingStream(Storage::readStream('sample.mp3’))
 
+// Accurance
+accuracy_engine can be passed, but will default to standard.  I've noticed mass difference when trying to analyze calls recorded at mp3 levels with high compression.
+
 // Alternative Upload Method
 $result = $voicebase->media()->uploadFromPath('sample.mp3'))
 
