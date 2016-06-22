@@ -38,7 +38,7 @@ class Voicebase
 	 *
 	 * @var string
 	 */
-	protected $accuracy_engine = 'standard';
+	public $accuracy_engine = 'standard';
 
 	/**
 	 * @var string
