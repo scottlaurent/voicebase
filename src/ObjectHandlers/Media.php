@@ -36,26 +36,42 @@ class Media extends BaseObjectManagerHandler
 	 * @return string
 	 * @throws \Exception
 	 */
-	public function uploadUsingStream($stream,$parameters=[])
+	public function uploadUsingStream($stream,$extra_configuration=[])
     {
-        $parameters['multipart'] = [
-            [
-                'name'=>'media',
-                'contents'=>$stream
-            ],
-             [
-                'name'=>'configuration',
-                'contents'=>json_encode(['configuration'=>['transcripts'=>['engine'=>$this->voicebase->accuracy_engine]]])
+
+	    $configuration = [
+	        'transcripts'=>[
+	            'engine'=>$this->voicebase->accuracy_engine
+	        ]
+	    ] + $extra_configuration;
+
+        $parameters = [
+            'multipart' => [
+	            [
+	                'name'=>'media',
+	                'contents'=>$stream
+	            ],
+				[
+					'name'=>'configuration',
+					'contents'=>json_encode([
+					    'configuration'=> $configuration
+					])
+				]
             ]
         ];
 
-        if ($stream)
-        {
+        try {
+
             $response = $this->voicebase->post('media',$parameters);
             return $this->decodeResponse($response);
+
+        } catch (\Exception $e) {
+
+	        throw new \Exception('There was a problem uploading your media file.  ' . $e->getMessage());
+
         }
 
-        throw new \Exception('Please submit a valid media file');
+
     }
 
 	/**
