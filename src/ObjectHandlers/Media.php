@@ -39,11 +39,11 @@ class Media extends BaseObjectManagerHandler
 	public function uploadUsingStream($stream,$extra_configuration=[])
     {
 
-	    $configuration = [
+	    $configuration = $extra_configuration + [
 	        'transcripts'=>[
 	            'engine'=>$this->voicebase->accuracy_engine
 	        ]
-	    ] + $extra_configuration;
+	    ];
 
         $parameters = [
             'multipart' => [
